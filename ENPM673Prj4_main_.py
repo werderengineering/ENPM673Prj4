@@ -7,6 +7,7 @@ import os
 import random
 
 from imageFileNames import *
+from OpticalFlow import *
 
 print('Imports Complete')
 
@@ -39,6 +40,10 @@ def main(prgRun):
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
 
+            OF=tracker(frame)
+
+
+
     if problem==2:
         directory = './Car4/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
@@ -54,6 +59,12 @@ def main(prgRun):
             cv2.imshow('Working Frame', frame)
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
+
+            OF = tracker(frame)
+
+
+
+
     if problem==3:
         directory = './DragonBaby/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
@@ -69,6 +80,8 @@ def main(prgRun):
             cv2.imshow('Working Frame', frame)
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
+
+        OF = tracker(frame)
 
 
     prgRun = False
