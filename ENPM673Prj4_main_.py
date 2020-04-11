@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import imutils
 import os
 import random
+from scipy import signal
 
 from imageFileNames import *
 from OpticalFlow import *
@@ -33,14 +34,17 @@ def main(prgRun):
 
         """process each image individually"""
         for i in range(len(imageList)):
+
             frameDir = directory + '/' + imageList[i]
             frame = cv2.imread(frameDir)
 
             cv2.imshow('Working Frame', frame)
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
-
-            OF=tracker(frame)
+            if i > 1:
+                PframeDir = directory + '/' + imageList[i-1]
+                Pframe = cv2.imread(PframeDir)
+                OF=tracker(frame,Pframe)
 
 
 
@@ -60,7 +64,10 @@ def main(prgRun):
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
 
-            OF = tracker(frame)
+            if i > 1:
+                PframeDir = directory + '/' + imageList[i - 1]
+                Pframe = cv2.imread(PframeDir)
+                OF = tracker(frame, Pframe)
 
 
 
@@ -81,7 +88,10 @@ def main(prgRun):
             if cv2.waitKey(25) & 0xFF == ord('q'):
                 break
 
-        OF = tracker(frame)
+            if i > 1:
+                PframeDir = directory + '/' + imageList[i - 1]
+                Pframe = cv2.imread(PframeDir)
+                OF = tracker(frame, Pframe)
 
 
     prgRun = False
