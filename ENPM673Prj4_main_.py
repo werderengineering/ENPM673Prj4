@@ -38,13 +38,18 @@ def main(prgRun):
             frameDir = directory + '/' + imageList[i]
             frame = cv2.imread(frameDir)
 
-            cv2.imshow('Working Frame', frame)
-            if cv2.waitKey(25) & 0xFF == ord('q'):
-                break
             if i > 1:
-                PframeDir = directory + '/' + imageList[i-1]
+                PframeDir = directory + '/' + imageList[i - 1]
                 Pframe = cv2.imread(PframeDir)
-                OF=tracker(frame,Pframe)
+                Tcx, Tcy = tracker(frame, Pframe)
+
+                cv2.circle(frame, (Tcx, Tcy), 10, (0, 0, 255), 2)
+
+                cv2.imshow('Original Frame', frame)
+                if cv2.waitKey(25) & 0xFF == ord('q'):
+                    break
+
+
 
 
 
@@ -60,14 +65,16 @@ def main(prgRun):
             frameDir = directory + '/' + imageList[i]
             frame = cv2.imread(frameDir)
 
-            cv2.imshow('Working Frame', frame)
-            if cv2.waitKey(25) & 0xFF == ord('q'):
-                break
-
             if i > 1:
                 PframeDir = directory + '/' + imageList[i - 1]
                 Pframe = cv2.imread(PframeDir)
-                OF = tracker(frame, Pframe)
+                Tcx, Tcy = tracker(frame, Pframe)
+
+                cv2.circle(frame, (Tcx, Tcy), 10, (0, 0, 255), 2)
+
+                cv2.imshow('Original Frame', frame)
+                if cv2.waitKey(25) & 0xFF == ord('q'):
+                    break
 
 
 
@@ -84,14 +91,16 @@ def main(prgRun):
             frameDir = directory + '/' + imageList[i]
             frame = cv2.imread(frameDir)
 
-            cv2.imshow('Working Frame', frame)
-            if cv2.waitKey(25) & 0xFF == ord('q'):
-                break
-
             if i > 1:
                 PframeDir = directory + '/' + imageList[i - 1]
                 Pframe = cv2.imread(PframeDir)
-                OF = tracker(frame, Pframe)
+                Tcx, Tcy = tracker(frame, Pframe)
+
+                cv2.circle(frame, (Tcx, Tcy), 10, (0, 0, 255), 2)
+
+                cv2.imshow('Original Frame', frame)
+                if cv2.waitKey(25) & 0xFF == ord('q'):
+                    break
 
 
     prgRun = False
