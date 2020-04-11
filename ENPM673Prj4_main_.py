@@ -19,13 +19,11 @@ flag = False
 prgRun = True
 
 
-
 def main(prgRun):
+    # start file
+    problem = 2
 
-    #start file
-    problem =3
-
-    if problem==1:
+    if problem == 1:
         directory = './Bolt2/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
 
@@ -38,6 +36,9 @@ def main(prgRun):
             frameDir = directory + '/' + imageList[i]
             frame = cv2.imread(frameDir)
 
+            if i == 0:
+                template = createtemplate(frame, left=250, right=320, top=75, bottom=150)
+
             if i > 1:
                 PframeDir = directory + '/' + imageList[i - 1]
                 Pframe = cv2.imread(PframeDir)
@@ -49,11 +50,7 @@ def main(prgRun):
                 if cv2.waitKey(25) & 0xFF == ord('q'):
                     break
 
-
-
-
-
-    if problem==2:
+    if problem == 2:
         directory = './Car4/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
 
@@ -65,6 +62,9 @@ def main(prgRun):
             frameDir = directory + '/' + imageList[i]
             frame = cv2.imread(frameDir)
 
+            if i == 0:
+                template = createtemplate(frame, left=65, right=180, top=45, bottom=135)
+
             if i > 1:
                 PframeDir = directory + '/' + imageList[i - 1]
                 Pframe = cv2.imread(PframeDir)
@@ -76,10 +76,7 @@ def main(prgRun):
                 if cv2.waitKey(25) & 0xFF == ord('q'):
                     break
 
-
-
-
-    if problem==3:
+    if problem == 3:
         directory = './DragonBaby/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
 
@@ -91,6 +88,13 @@ def main(prgRun):
             frameDir = directory + '/' + imageList[i]
             frame = cv2.imread(frameDir)
 
+            cv2.imshow('Original Frame', frame)
+            if cv2.waitKey(25) & 0xFF == ord('q'):
+                break
+
+            if i == 0:
+                template = createtemplate(frame, left=130, right=220, top=75, bottom=300)
+
             if i > 1:
                 PframeDir = directory + '/' + imageList[i - 1]
                 Pframe = cv2.imread(PframeDir)
@@ -101,7 +105,6 @@ def main(prgRun):
                 cv2.imshow('Original Frame', frame)
                 if cv2.waitKey(25) & 0xFF == ord('q'):
                     break
-
 
     prgRun = False
     return prgRun

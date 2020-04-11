@@ -1,20 +1,32 @@
 from __main__ import *
 
-def tracker(frame,Pframe):
 
-    framG=cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+def createtemplate(frame, left, right, top, bottom):
+    template = frame[top:bottom,left: right]
+
+
+    cv2.imshow('tempalte Frame', template)
+    if cv2.waitKey(25) & 0xFF == ord('q'):
+        None
+
+    template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+
+    return template
+
+
+def tracker(frame, Pframe):
+    framG = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     PFrameG = cv2.cvtColor(Pframe, cv2.COLOR_BGR2GRAY)
 
-    #Find center
+    # Find center
 
-    LX=frame.shape[0]
-    LY=frame.shape[1]
-    CY=int(LX/2)
-    CX=int(LY/2)
+    LX = frame.shape[0]
+    LY = frame.shape[1]
+    CY = int(LX / 2)
+    CX = int(LY / 2)
 
-    NormF1=framG/255
-    NormFP=PFrameG/255
-
+    NormF1 = framG / 255
+    NormFP = PFrameG / 255
 
     ##################################################
     # w=int(NormF1.shape[0]/2)
@@ -44,8 +56,7 @@ def tracker(frame,Pframe):
     #         u[i, j] = nu[0]
     #         v[i, j] = nu[1]
 
+    # Output should be desired trackable XY coordinates
 
-    #Output should be desired trackable XY coordinates
-
-    return CX,CY
+    return CX, CY
 ################################################
