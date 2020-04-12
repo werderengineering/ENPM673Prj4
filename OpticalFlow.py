@@ -17,7 +17,7 @@ def createtemplate(frame, rect):
     return template
 
 
-def affineLKtracker(frame,temp,rect,Pprev):
+def affineLKtracker(frame,temp,rect,Pprev,Grad):
 
 
     # Find center
@@ -26,6 +26,11 @@ def affineLKtracker(frame,temp,rect,Pprev):
     LY = frame.shape[1]
     CY = int(LX / 2)
     CX = int(LY / 2)
+
+    TLX = temp.shape[0]
+    TLY = temp.shape[1]
+    TCY = int(LX / 2)
+    TCX = int(LY / 2)
 
     NormF1 = frame / 255
     NormFP = frame/ 255
