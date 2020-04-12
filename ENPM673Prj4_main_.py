@@ -62,9 +62,12 @@ def runVid(directory, rect):
             framG = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             templateG = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
 
-            Grad = cv2.Laplacian(framG, cv2.CV_64F)
+            # Grad = cv2.Laplacian(framG, cv2.CV_64F)
 
-            Tcx, Tcy, Pprev = affineLKtracker(framG, templateG, rect, Pprev,Grad)
+            GradX = cv2.Sobel(framG, cv2.CV_64F, 1, 0, ksize=5)
+            GradY = cv2.Sobel(framG, cv2.CV_64F, 0, 1, ksize=5)
+
+            Tcx, Tcy, Pprev = affineLKtracker(framG, templateG, rect, Pprev,GradX,GradY)
 
             cv2.circle(frame, (Tcx, Tcy), 10, (0, 0, 255), 2)
 
