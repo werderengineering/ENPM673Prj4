@@ -35,12 +35,18 @@ def affline_Jacobian(rect):
     assert type(rect) == np.ndarray
     point_upperLeft = rect[0:2, 0].astype(int)
     point_lowerRight = rect[0:2, 1].astype(int)
-    width = int(point_lowerRight[0] - point_upperLeft[0])    # width of bounding box
-    height = int(point_lowerRight[1] - point_upperLeft[1])   # height of bounding box
+
+    left = int(rect[0, 0])
+    right = int(rect[0, 1])
+    top = int(rect[1, 1])
+    bottom = int(rect[1, 0])
+
+    width = int(right-left)    # width of bounding box
+    height = int(bottom- top)   # height of bounding box
     Jacobian_W = np.zeros((width*height, 2, 6))   # initialize the Jacobian of affine transformation matrix
     index = 0
-    for y in range(point_upperLeft[1], point_lowerRight[1]):    # loop over range of y: y is second element in a variable vector
-        for x in range(point_upperLeft[0], point_lowerRight[0]):    # loop over range of x: x is first element in a variable vector
+    for y in range(top,bottom):    # loop over range of y: y is second element in a variable vector
+        for x in range(left,right):    # loop over range of x: x is first element in a variable vector
             Jacobian_W[index, :] = np.array([[x, 0, y, 0, 1, 0],
                                              [0, x, 0, y, 0, 1]])
             index = index + 1

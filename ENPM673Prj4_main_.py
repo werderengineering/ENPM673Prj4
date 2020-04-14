@@ -11,7 +11,6 @@ import featureObjectTracking as ft
 import imagesProcessing as ip
 
 from imageFileNames import *
-from OpticalFlow import *
 
 print('Imports Complete')
 
@@ -21,6 +20,27 @@ print(cv2.__version__)
 flag = False
 prgRun = True
 flag_trackingFeature = True
+
+
+def createtemplate(directory, rect):
+    frame = cv2.imread(directory+'/0001.jpg')
+    left = rect[0]
+    right = rect[1]
+    top = rect[2]
+    bottom = rect[3]
+    template = frame[top:bottom, left: right]
+    # template = frame[left: right,top:bottom]
+
+    rect= np.array([[left, right], [bottom, top], [1, 1]])
+
+
+    cv2.imshow('template Frame', template)
+    if cv2.waitKey(25) & 0xFF == ord('q'):
+        None
+
+    template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+
+    return template,rect
 
 def devPar(Par, rect):
     xD = rect[1] - rect[0]
@@ -40,7 +60,28 @@ def devPar(Par, rect):
 
     return newPar
 
+def runVidOp(directory, rect):
 
+    tempt,rect=createtemplate(directory, rect)
+    frames = ip.firstTemplateAndSecondFrameAndImageList(
+        directory)  # get first bounding box around template, template, frames
+    print("Import images done")
+    if flag:
+        ip.drawRect(frames[0], rect, True)
+    for frame in frames:
+        frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        frame_gray = cv2.equalizeHist(frame_gray)
+        rect = ft.affineLKtracker(frame_gray, tempt, rect)  # rect update
+        tempt = ip.subImageByBoundingBox(frame_gray, rect)  # template update
+        """show results"""
+        frame_featureMarked = ip.drawRect(frame, rect, False)
+        if flag_trackingFeature:
+            cv2.imshow("Tracking feature", frame_featureMarked)
+            if cv2.waitKey(25) & 0xFF == ord('q'):
+                break
+
+
+#Deprecated
 def runVid(directory, rect):
     Pprev = np.zeros([6, 1])
     Pprev[4] = rect[0]
@@ -71,8 +112,6 @@ def runVid(directory, rect):
 
             Tcx, Tcy, Pprev = affineLKtracker(framG, templateG, rect, Pprev, GradX, GradY)
 
-            cv2.circle(frame, (Tcx, Tcy), 10, (0, 0, 255), 2)
-
             # Pprev = devPar(Pprev, rect)
 
             cv2.imshow('Original Frame', frame)
@@ -80,62 +119,38 @@ def runVid(directory, rect):
                 break
 
 
+
 def main(prgRun):
     # start file
-    problem = 2
+    problem = 3
 
     if problem == 1:
         directory = './Bolt2/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
         # left = 250, right = 320, top = 75, bottom = 150
-        rect, tempt, frames = ip.firstTemplateAndSecondFrameAndImageList(directory) # get first bounding box around template, template, frames
-        print("Import images done")
-        if flag:
-            cv2.imshow("first frame", frames[0])
-            if cv2.waitKey(0):
-                cv2.destroyAllWindows()
-        for frame in frames:
-            frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            frame_gray = cv2.equalizeHist(frame_gray)
-            rect = ft.affineLKtracker(frame_gray, tempt, rect)  # rect update
-            tempt = ip.subImageByBoundingBox(frame, rect)  # template update
-            """show results"""
-            p1, p2 = np.transpose(rect.astype(int))[:, 0:1]
-            cv2.rectangle(frame_gray, p1, p2, (0, 255, 0), 3)  # tempt update
+
+        rect=[250,320,75,150]
+        runVidOp(directory,rect)
         print("Problem 1 finished")
         # runVid(directory, rect)
-
 
     if problem == 2:
         directory = './Car4/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
         # left = 65, right = 180, top = 45, bottom = 135
-        rect, tempt, frames = ip.firstTemplateAndSecondFrameAndImageList(
-            directory)  # get first bounding box around template, template, frames
-        print("Import images done")
-        if flag:
-            ip.drawRect(frames[0], rect, True)
-        for frame in frames:
-            frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            frame_gray = cv2.equalizeHist(frame_gray)
-            rect = ft.affineLKtracker(frame_gray, tempt, rect)  # rect update
-            tempt = ip.subImageByBoundingBox(frame_gray, rect)  # template update
-            """show results"""
-            frame_featureMarked = ip.drawRect(frame, rect, False)
-            if flag_trackingFeature:
-                cv2.imshow("Tracking feature", frame_featureMarked)
-                if cv2.waitKey(0):
-                    cv2.destroyAllWindows()
-        print("Problem 1 finished")
+        rect = [65, 180, 45, 135]
+        runVidOp(directory, rect)
+        print("Problem 2 finished")
         # runVid(directory, rect)
 
     if problem == 3:
         directory = './DragonBaby/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
         # left = 130, right = 220, top = 75, bottom = 300
-        rect = [130, 220, 75, 300]
-
-        runVid(directory, rect)
+        rect = [130,220, 75, 300]
+        runVidOp(directory, rect)
+        print("Problem 3 finished")
+        # runVid(directory, rect)
 
     prgRun = False
     return prgRun
