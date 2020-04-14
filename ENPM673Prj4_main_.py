@@ -88,6 +88,8 @@ def main(prgRun):
         directory = './Bolt2/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
         # left = 250, right = 320, top = 75, bottom = 150
+        rect = [250, 320, 75, 150]
+        runVid(directory, rect)
         rect, tempt, frames = ip.firstTemplateAndSecondFrameAndImageList(directory) # get first bounding box around template, template, frames
         print("Import images done")
         if flag:
@@ -110,6 +112,8 @@ def main(prgRun):
         directory = './Car4/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
         # left = 65, right = 180, top = 45, bottom = 135
+        rect = [65, 180, 45, 135]
+        runVid(directory, rect)
         rect, tempt, frames = ip.firstTemplateAndSecondFrameAndImageList(
             directory)  # get first bounding box around template, template, frames
         print("Import images done")
