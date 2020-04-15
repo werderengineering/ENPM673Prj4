@@ -2,21 +2,6 @@ import cv2
 import os
 import numpy as np
 
-def createtemplate(frame, rect):
-    left = rect[0]
-    right = rect[1]
-    top = rect[2]
-    bottom = rect[3]
-    template = frame[top:bottom, left: right]
-
-    # cv2.imshow('template Frame', template)
-    # if cv2.waitKey(25) & 0xFF == ord('q'):
-    #     None
-
-    # template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
-
-    return template
-
 def firstTemplateAndSecondFrameAndImageList(path):
     images = []
     cv_img = []
@@ -55,7 +40,7 @@ def drawRect(img, rect, flag=False):
     p1, p2 = np.transpose(rect.astype(int))[:, 0:2]
     p2 = tuple(p2)
     p1 = tuple(p1)
-    img = cv2.rectangle(img, p1, p2, (0, 255, 0), 3)
+    img = cv2.rectangle(img, p2, p1, (0, 255, 0), 3)
     if flag:
         cv2.imshow("Image with marked feature", img)
         if cv2.waitKey(0):

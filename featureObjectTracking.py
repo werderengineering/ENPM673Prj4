@@ -139,10 +139,13 @@ def inverseCompositional(frame_current, template, rect, p_prev, flag_frameCrop=F
         if cv2.waitKey(0):
             cv2.destroyAllWindows()
 
-    return np.dot(W_x_p, rect)  # return the rectangle upperLeft and lowerRight corners
+    NewP=p_prev+delta_p
+    NewRect=np.dot(W_x_p, rect)
+
+    return NewRect, NewP# return the rectangle upperLeft and lowerRight corners
 
 
-def affineLKtracker(frame_current, template, rect, algorithm="inverse Compositional"):
+def affineLKtracker(frame_current, template, rect, P, algorithm="inverse Compositional"):
     """
         Parameters
         ----------
@@ -167,13 +170,13 @@ def affineLKtracker(frame_current, template, rect, algorithm="inverse Compositio
     # check element type
     assert type(frame_current[0, 0]) == np.uint8
     assert type(rect[0][0]) == float or np.int32, "The bounding box upper right x coordinates is a " + str(type(rect[0][0]))
-    p = np.array([[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]).reshape(6, 1)
+
     """get a new rect that locate the feature on current frame"""
     if algorithm == "inverse Compositional":
-        rect = inverseCompositional(frame_current, template, rect, p, flag_frameCrop=False)
+        rect,NewP = inverseCompositional(frame_current, template, rect, P, flag_frameCrop=False)
     else:
         Exception("No such algorithm: " + str(algorithm))
-    return rect
+    return rect,NewP
 
 
 def debug():
