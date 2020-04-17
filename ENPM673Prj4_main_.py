@@ -23,49 +23,39 @@ prgRun = True
 flag_trackingFeature = True
 
 
-
 def runVidOp(directory, rect):
-
-    tempt,rect,rectT=createtemplate(directory, rect)
+    tempt, rect, rectT = createtemplate(directory, rect)
     frames = ip.firstTemplateAndSecondFrameAndImageList(
         directory)  # get first bounding box around template, template, frames
 
-    p = np.array([[0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]).reshape(6, 1)
-    w=np.eye(3)
-    cache=[]
     print("Import images done")
-    if flag:
-        ip.drawRect(frames[0], rect, True)
-    for frame in frames:
-        # try:
-        frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        frame_gray = cv2.equalizeHist(frame_gray)
-        rect, p, w, cache= ft.affineLKtracker(frame_gray, rect, tempt, rectT, p, w,cache)  # rect update
-        tempt = ip.subImageInBoundingBoxAndEq(frame_gray, rect)  # template update
-        """show results"""
-        frame_featureMarked = ip.drawRect(frame, rect, False)
-        if flag_trackingFeature:
-            cv2.imshow("Tracking feature", frame_featureMarked)
-            if cv2.waitKey(25) & 0xFF == ord('q'):
-                break
-        # except:
-        #     print(rect)
-        #     pass
 
+    ip.drawRect(frames[0], rect, True)
+    # try:
+    # frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # frame_gray = cv2.equalizeHist(frame_gray)
+    fr.LKRegisteration(frames, tempt, rectT)  # rect update
+    # tempt = ip.subImageInBoundingBoxAndEq(frame_gray, rect)  # template update
+    # """show results"""
+    # frame_featureMarked = ip.drawRect(frame, rect, False)
+    # if flag_trackingFeature:
+    #     cv2.imshow("Tracking feature", frame_featureMarked)
+    #     if cv2.waitKey(25) & 0xFF == ord('q'):
+    #         break
 
 
 
 def main(prgRun):
     # start file
-    problem = 2
+    problem = 3
 
     if problem == 1:
         directory = './Bolt2/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
         # left = 250, right = 320, top = 75, bottom = 150
 
-        rect=[250,320,75,150]
-        runVidOp(directory,rect)
+        rect = [250, 320, 75, 150]
+        runVidOp(directory, rect)
         print("Problem 1 finished")
         # runVid(directory, rect)
 
@@ -73,14 +63,8 @@ def main(prgRun):
         directory = './Car4/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
         # left = 65, right = 180, top = 45, bottom = 135
-        # rect = [65, 180, 45, 135]
-        # runVid(directory, rect)
-        rect_template, tempt, frames = temp.rectAndTemp_problem2(directory, flag=True)  # get first bounding box around template, template, frames
-        print("Import images done")
-        ip.drawRect(frames[0], rect_template, True)
-        if cv2.waitKey(0):
-            cv2.destroyAllWindows()
-        fr.LKRegisteration(frames, tempt, rect_template, flag_showFeatureRegisteration=True)
+        rect = [67, 165, 50, 130]
+        runVidOp(directory, rect)
         print("Problem 2 finished")
         # runVid(directory, rect)
 
@@ -88,7 +72,7 @@ def main(prgRun):
         directory = './DragonBaby/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
         # left = 130, right = 220, top = 75, bottom = 300
-        rect = [150,220, 75, 150]
+        rect = [150, 220, 75, 150]
         runVidOp(directory, rect)
         print("Problem 3 finished")
         # runVid(directory, rect)
