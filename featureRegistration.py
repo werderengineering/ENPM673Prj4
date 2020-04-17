@@ -105,7 +105,8 @@ def inverseCompositional(frame_current, template, rect_template, p_prev, W_prev,
     grad_template_x, grad_template_y, grad_template, Jacobian_W, SD, Hinv = cache
     """calculate the pixels inside the rectangle bounding box that highlight the matching feature from previous frame"""
     if flag_showItera:
-        frame_current_dewarped = cv2.warpAffine(frame_current, np.linalg.inv(W_prev)[0:2, :], (frame_current.shape[1],
+        W_prev_inv = np.linalg.inv(W_prev)
+        frame_current_dewarped = cv2.warpAffine(frame_current, W_prev[0:2, :], (frame_current.shape[1],
                                                                                        frame_current.shape[
                                                                                            0]))  # dewarp the current frame to go back to the view of first frame
         template_frame_current_dewarped = ip.subImageInBoundingBoxAndEq(frame_current_dewarped, rect_template, histEqualize=True)
@@ -124,7 +125,11 @@ def inverseCompositional(frame_current, template, rect_template, p_prev, W_prev,
         W_prev_inv = np.linalg.inv(W_prev)
         # dewarp the current frame to go back to the view of first frame
         frame_current_dewarped = cv2.warpAffine(frame_current, W_prev_inv[0:2, :], (frame_current.shape[1], frame_current.shape[0]))
-        template_frame_current_dewarped = ip.subImageInBoundingBoxAndEq(frame_current_dewarped, rect_template, histEqualize=True)
+        template_frame_current_dewarped = ip.subImageInBoundingBoxAndEq(frame_current_dewarped, rect_template)
+
+        """histogram equalize the dewarped cropped image"""
+        # template_frame_current_dewarped = cv2.equalizeHist(template_frame_current_dewarped)
+
         error = template - template_frame_current_dewarped  # compute the error between new feature and previous frame, shape: (20x20)
         error_column = ip.imgToArray(error)   # reshape error array to be (400, 1), checked
 
@@ -138,8 +143,8 @@ def inverseCompositional(frame_current, template, rect_template, p_prev, W_prev,
         if np.linalg.norm(delta_p) < threshold:
             print("Converged at iteration #" + str(i))
             break
-    print("The average error is \n" + str(np.mean(error)))
-    print("Delta p is \n" + str((p_update-p_prev).T))
+    print("The average error is " + str(np.mean(error)) + " in 0~1 \n" + "                     " + str(np.mean(error)*255) + " in 255")
+    print("Delta p is \n" + str((p_update-p_prev).T.reshape((3, 2)).T))
     """show Lucas-Kanade tracking result"""
     if flag_showItera:
         # highlight where big error is
@@ -151,7 +156,7 @@ def inverseCompositional(frame_current, template, rect_template, p_prev, W_prev,
         cv2.imshow("Dewarped current frame after update", frame_current_dewarped)
         cv2.imshow("Feature cropped from dewarped current frame after update", template_frame_current_dewarped)
         cv2.imshow("Feature template", template)
-        if cv2.waitKey(0): # & 0xFF == ord('q'):
+        if cv2.waitKey(0):  # & 0xFF == ord('q'):
             cv2.destroyAllWindows()
     return np.dot(W_update, rect_template), p_update, W_update  # return the rectangle upperLeft and lowerRight corners
 
@@ -219,6 +224,7 @@ def LKRegisteration(frames, template, rect_template, flag_showFeatureRegisterati
             a bounding box that marks the template region in first frame, the rectangle coordinates that defines the
             tracking feature location at the first image
     """
+    # template = cv2.equalizeHist(template)
     template = ip.uint8ToFloat(template)    # convert the template from uint8 to float
     rect = rect_template.copy()
     p_prev = np.zeros((6, 1))   # assume the first frame is exact same with the frame where template cropped from
@@ -228,7 +234,7 @@ def LKRegisteration(frames, template, rect_template, flag_showFeatureRegisterati
     for i, frame in enumerate(frames):
         print("Frame # " + str(i))
         frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        frame_gray = cv2.equalizeHist(frame_gray)
+        # frame_gray = cv2.equalizeHist(frame_gray)
         frame_gray = ip.uint8ToFloat(frame_gray)
         rect, p_prev, transformation_affine, cache = affineLKFeatureRegnization(frame_gray, rect, template, rect_template, p_prev,
                                                                         transformation_affine, cache,
