@@ -4,6 +4,19 @@ import numpy as np
 import temp
 
 
+def firstTemplateAndSecondFrameAndImageList(path):
+    images = []
+    cv_img = []
+    for image in os.listdir(path):
+        images.append(image)
+    images.sort()
+    for image in images:
+        img = cv2.imread("%s/%s" % (path, image))
+        cv_img.append(img)
+    """get rectangle and template"""
+    # rect, tempt = temp.rectAndTemp_problem1()
+    return cv_img
+
 def rectangleBoundingBoxToInternalPxielsCoodinatesArray(rect):
     """
         Parameters
