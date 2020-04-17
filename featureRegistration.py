@@ -157,7 +157,7 @@ def inverseCompositional(frame_current, template, rect_template, p_prev, W_prev,
     return np.dot(W_update, rect_template), p_update, W_update  # return the rectangle upperLeft and lowerRight corners
 
 
-def affineLKtracker(frame_current, rect, template, rect_template, p_prev, W_prev, cache, algorithm="inverse Compositional", flag_itera=False):
+def affineLKFeatureRegnization(frame_current, rect, template, rect_template, p_prev, W_prev, cache, algorithm="inverse Compositional", flag_itera=False):
     """
         Parameters
         ----------
@@ -208,6 +208,35 @@ def affineLKtracker(frame_current, rect, template, rect_template, p_prev, W_prev
         Exception("No such algorithm: " + str(algorithm))
     return rect, p_update, W_update, cache
 
+
+
+def LKRegisteration(frames, template, rect_template, flag_showFeatureRegisteration = True):
+    """
+        Parameters
+        ----------
+        frames : np.ndarray <int>
+            a grayscale image of the current frame
+        template : np.ndarray <int>
+            a grayscale image of the template
+        rect_template: np.ndarray <int>
+            a bounding box that marks the template region in first frame, the rectangle coordinates that defines the
+            tracking feature location at the first image
+    """
+    template = ip.uint8ToFloat(template)
+    rect = rect_template.copy()
+    p_prev = np.zeros((6, 1))   # assume the first frame is exact same with the frame where template cropped from
+    transformation_affine = np.eye(3,
+                                   3)  # since it's the warp transformation of first image itself, it should change the coordinates
+    cache = []  # some constant for each iteration
+    for frame in frames:
+        frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        frame_gray = cv2.equalizeHist(frame_gray)
+        rect, p_prev, transformation_affine, cache = affineLKFeatureRegnization(frame_gray, rect, template, rect_template, p_prev,
+                                                                        transformation_affine, cache,
+                                                                        algorithm="inverse Compositional",
+                                                                        flag_itera=True)  # rect update
+        if flag_showFeatureRegisteration:
+            ip.drawRect(frame, rect, flag_showImgFeatureWithMarked=True)
 
 def debug():
     # affineLKtracker(img, tmp, rect, p_prev, flag_frameCrop=True)
