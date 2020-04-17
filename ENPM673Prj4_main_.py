@@ -36,7 +36,7 @@ def runVidOp(directory, rect):
     rect = np.array([[left, right, right], [top, top, bottom], [1, 1, 1]])
     template = ip.subImageInBoundingBoxAndEq(frame_contains_template, rect)
     print("Import images done")
-    ip.drawRect(frames[0], rect, True)
+    ip.drawRect(frames[20], rect, True)
 
     fr.LKRegisteration(frames[20:], template, rect)  # rect update
     # tempt = ip.subImageInBoundingBoxAndEq(frame_gray, rect)  # template update
@@ -51,7 +51,7 @@ def runVidOp(directory, rect):
 
 def main(prgRun):
     # start file
-    problem = 1
+    problem = 2
 
     if problem == 1:
         directory = './Bolt2/img'
@@ -67,7 +67,7 @@ def main(prgRun):
         directory = './Car4/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
         # left = 65, right = 180, top = 45, bottom = 135
-        rect = [67, 165, 50, 130]
+        rect = [68, 160, 58, 130]
         runVidOp(directory, rect)
         # rectT, tempt, frames = rectAndTemp_problem2(directory)
         # fr.LKRegisteration(frames, tempt, rectT)
