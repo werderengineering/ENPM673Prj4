@@ -51,7 +51,7 @@ def runVidOp(directory, rect):
 
 def main(prgRun):
     # start file
-    problem = 2
+    problem = 1
 
     if problem == 1:
         directory = './Bolt2/img'

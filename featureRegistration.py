@@ -110,11 +110,11 @@ def inverseCompositional(frame_current, template, rect_template, p_prev, W_prev,
                                                                                        frame_current.shape[
                                                                                            0]))  # dewarp the current frame to go back to the view of first frame
         template_frame_current_dewarped = ip.subImageInBoundingBoxAndEq(frame_current_dewarped, rect_template, histEqualize=True)
-        cv2.imshow("Dewarped current frame before update", frame_current_dewarped)
-        cv2.imshow("Feature cropped from dewarped current frame before update", template_frame_current_dewarped)
-        cv2.imshow("Feature template", template)
-        if cv2.waitKey(25) & 0xFF == ord('q'):
-            cv2.destroyAllWindows()
+        # cv2.imshow("Dewarped current frame before update", frame_current_dewarped)
+        # cv2.imshow("Feature cropped from dewarped current frame before update", template_frame_current_dewarped)
+        # cv2.imshow("Feature template", template)
+        # if cv2.waitKey(25) & 0xFF == ord('q'):
+        #     cv2.destroyAllWindows()
     """The new affine warp transformation"""
     W_update = W_prev.copy()
     p_update = p_prev.copy()
@@ -153,9 +153,9 @@ def inverseCompositional(frame_current, template, rect_template, p_prev, W_prev,
                                                                                        frame_current.shape[
                                                                                            0]))  # dewarp the current frame to go back to the view of first frame
         template_frame_current_dewarped = ip.subImageInBoundingBoxAndEq(frame_current_dewarped, rect_template, histEqualize=True)
-        cv2.imshow("Dewarped current frame after update", frame_current_dewarped)
-        cv2.imshow("Feature cropped from dewarped current frame after update", template_frame_current_dewarped)
-        cv2.imshow("Feature template", template)
+        # cv2.imshow("Dewarped current frame after update", frame_current_dewarped)
+        # cv2.imshow("Feature cropped from dewarped current frame after update", template_frame_current_dewarped)
+        # cv2.imshow("Feature template", template)
         if cv2.waitKey(25) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
     return np.dot(W_update, rect_template), p_update, W_update  # return the rectangle upperLeft and lowerRight corners

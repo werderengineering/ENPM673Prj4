@@ -118,8 +118,8 @@ def drawRect(img, rect, flag_showImgFeatureWithMarked=False):
     cv2.rectangle(img_copy, p1, p3, (0, 255, 0))
     if flag_showImgFeatureWithMarked:
         cv2.imshow("Image with marked feature", img_copy)
-        if cv2.waitKey(0):
-            cv2.destroyAllWindows()
+        if cv2.waitKey(25) & 0xFF == ord('q'):
+            None
     return img_copy
 
 
