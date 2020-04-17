@@ -7,7 +7,7 @@ import os
 import random
 from scipy import signal
 
-import featureObjectTracking as ft
+import featureRegistration as fr
 import imagesProcessing as ip
 from temp import *
 
@@ -57,7 +57,7 @@ def runVidOp(directory, rect):
 
 def main(prgRun):
     # start file
-    problem = 3
+    problem = 2
 
     if problem == 1:
         directory = './Bolt2/img'
@@ -73,8 +73,14 @@ def main(prgRun):
         directory = './Car4/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
         # left = 65, right = 180, top = 45, bottom = 135
-        rect = [67, 165, 50, 130]
-        runVidOp(directory, rect)
+        # rect = [65, 180, 45, 135]
+        # runVid(directory, rect)
+        rect_template, tempt, frames = temp.rectAndTemp_problem2(directory, flag=True)  # get first bounding box around template, template, frames
+        print("Import images done")
+        ip.drawRect(frames[0], rect_template, True)
+        if cv2.waitKey(0):
+            cv2.destroyAllWindows()
+        fr.LKRegisteration(frames, tempt, rect_template, flag_showFeatureRegisteration=True)
         print("Problem 2 finished")
         # runVid(directory, rect)
 

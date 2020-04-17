@@ -70,8 +70,8 @@ def subImageInBoundingBoxAndEq(img, rect, histEqualize=False):
     assert img_cropped.shape[0] == point_lowerRight[1] - point_upperLeft[1] + 1, "img cut to size: " + str(
         img_cropped.shape[1]) + " in y, and supposed to be " + str(
         int(point_lowerRight[1] - point_upperLeft[1]))  # number of pixles in y smaller than range
-    if histEqualize:
-        img_cropped = cv2.equalizeHist(img_cropped)
+    # if histEqualize:
+        # img_cropped = cv2.equalizeHist(img_cropped)
     return img_cropped
 
 

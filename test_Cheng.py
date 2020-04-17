@@ -45,3 +45,9 @@ def checAffineWarp():
     #     cv2.destroyAllWindows()
 
 checAffineWarp()
+
+x1, y1, 1 = point_upperLeft
+x2, y2, 1 = point_upperRight
+x3, y3, 1 = point_lowerLeft
+
+points = [[x1, x2, x3], [y1, y2, y3], [1, 1 ,1]]

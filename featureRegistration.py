@@ -87,7 +87,7 @@ def inverseCompositional(frame_current, template, rect_template, p_prev, W_prev,
         the matrix of previous affine transformation warping
     """
     threshold = 0.1
-    iteration = 10000
+    iteration = 1000
     # check type
     assert type(frame_current) == np.ndarray
     assert type(template) == np.ndarray
@@ -98,21 +98,21 @@ def inverseCompositional(frame_current, template, rect_template, p_prev, W_prev,
     assert rect_template.shape == (3, 3)
     assert W_prev.shape == (3, 3)
     # check element type
-    assert type(frame_current[0, 0]) == np.uint8
+    assert type(frame_current[0, 0]) == np.float64
     assert type(rect_template[0][0]) == float or np.int32, "The bounding box upper right x coordinates is a " + str(type(rect_template[0][0]))
     assert type(W_prev[0, 0]) == np.float64, "The initial p variable is a " + str(type(W_prev[0, 0]))
     """pre-processing the data from the tracking of last frame"""
     grad_template_x, grad_template_y, grad_template, Jacobian_W, SD, Hinv = cache
     """calculate the pixels inside the rectangle bounding box that highlight the matching feature from previous frame"""
     if flag_showItera:
-        frame_current_dewarped = cv2.warpAffine(ip.floatToUint8(frame_current), np.linalg.inv(W_prev)[0:2, :], (frame_current.shape[1],
+        frame_current_dewarped = cv2.warpAffine(frame_current, np.linalg.inv(W_prev)[0:2, :], (frame_current.shape[1],
                                                                                        frame_current.shape[
                                                                                            0]))  # dewarp the current frame to go back to the view of first frame
-        template_frame_current_dewarped = ip.subImageInBoundingBoxAndEq(ip.floatToUint8(frame_current_dewarped), rect_template, histEqualize=True)
-        cv2.imshow("Dewarped current frame before update", ip.floatToUint8(frame_current_dewarped))
-        cv2.imshow("Feature cropped from dewarped current frame before update", ip.floatToUint8(template_frame_current_dewarped))
-        cv2.imshow("Feature template", ip.floatToUint8(template))
-        if cv2.waitKey(25) & 0xFF == ord('q'):
+        template_frame_current_dewarped = ip.subImageInBoundingBoxAndEq(frame_current_dewarped, rect_template, histEqualize=True)
+        cv2.imshow("Dewarped current frame before update", frame_current_dewarped)
+        cv2.imshow("Feature cropped from dewarped current frame before update", template_frame_current_dewarped)
+        cv2.imshow("Feature template", template)
+        if cv2.waitKey(0):      # & 0xFF == ord('q'):
             cv2.destroyAllWindows()
     """The new affine warp transformation"""
     W_update = W_prev.copy()
@@ -125,7 +125,6 @@ def inverseCompositional(frame_current, template, rect_template, p_prev, W_prev,
         # dewarp the current frame to go back to the view of first frame
         frame_current_dewarped = cv2.warpAffine(frame_current, W_prev_inv[0:2, :], (frame_current.shape[1], frame_current.shape[0]))
         template_frame_current_dewarped = ip.subImageInBoundingBoxAndEq(frame_current_dewarped, rect_template, histEqualize=True)
-        template_frame_current_dewarped = ip.uint8ToFloat(template_frame_current_dewarped)
         error = template - template_frame_current_dewarped  # compute the error between new feature and previous frame, shape: (20x20)
         error_column = ip.imgToArray(error)   # reshape error array to be (400, 1), checked
 
@@ -145,14 +144,14 @@ def inverseCompositional(frame_current, template, rect_template, p_prev, W_prev,
     if flag_showItera:
         # highlight where big error is
         # cv2.circle(frame_current_dewarped)
-        frame_current_dewarped = cv2.warpAffine(ip.floatToUint8(frame_current), np.linalg.inv(W_prev)[0:2, :], (frame_current.shape[1],
+        frame_current_dewarped = cv2.warpAffine(frame_current, np.linalg.inv(W_update)[0:2, :], (frame_current.shape[1],
                                                                                        frame_current.shape[
                                                                                            0]))  # dewarp the current frame to go back to the view of first frame
-        template_frame_current_dewarped = ip.subImageInBoundingBoxAndEq(ip.floatToUint8(frame_current_dewarped), rect_template, histEqualize=True)
-        cv2.imshow("Dewarped current frame after update", ip.floatToUint8(frame_current_dewarped))
-        cv2.imshow("Feature cropped from dewarped current frame after update", ip.floatToUint8(template_frame_current_dewarped))
-        cv2.imshow("Feature template", ip.floatToUint8(template))
-        if cv2.waitKey(25) & 0xFF == ord('q'):
+        template_frame_current_dewarped = ip.subImageInBoundingBoxAndEq(frame_current_dewarped, rect_template, histEqualize=True)
+        cv2.imshow("Dewarped current frame after update", frame_current_dewarped)
+        cv2.imshow("Feature cropped from dewarped current frame after update", template_frame_current_dewarped)
+        cv2.imshow("Feature template", template)
+        if cv2.waitKey(0): # & 0xFF == ord('q'):
             cv2.destroyAllWindows()
     return np.dot(W_update, rect_template), p_update, W_update  # return the rectangle upperLeft and lowerRight corners
 
@@ -185,11 +184,10 @@ def affineLKFeatureRegnization(frame_current, rect, template, rect_template, p_p
     assert len(frame_current.shape) == 2, "frame shape is " + str(frame_current.shape)
     assert rect.shape == (3, 2) or (3, 3)
     # check element type
-    assert type(frame_current[0, 0]) == np.uint8
+    assert type(frame_current[0, 0]) == np.float64
     assert type(rect[0][0]) == float or np.int32, "The bounding box upper right x coordinates is a " + str(type(rect[0][0]))
 
     p_update, W_update = p_prev.copy(), W_prev.copy()
-
     """get a new rect that locate the feature on current frame"""
     if algorithm == "inverse Compositional":
         if len(cache) == 0:
@@ -202,12 +200,11 @@ def affineLKFeatureRegnization(frame_current, rect, template, rect_template, p_p
             SD = steepestDescent(grad_template, Jacobian_W)  # Compute the steepest descent image, shape: (400, 6) = (400, 2, 6) x (400, 2, 1)  checked
             Hinv = hessiaMatrixInverse(SD)  # compute the inverse of Hessian matrix based on SD, shape: (6, 6) = (6x400) dot (400x6)
             cache = grad_template_x, grad_template_y, grad_template, Jacobian_W, SD, Hinv
-
+        """iteratively update the bounding box"""
         rect, p_update, W_update = inverseCompositional(frame_current, template, rect_template, p_prev, W_prev, cache, flag_showItera=flag_itera)
     else:
         Exception("No such algorithm: " + str(algorithm))
     return rect, p_update, W_update, cache
-
 
 
 def LKRegisteration(frames, template, rect_template, flag_showFeatureRegisteration = True):
@@ -222,15 +219,17 @@ def LKRegisteration(frames, template, rect_template, flag_showFeatureRegisterati
             a bounding box that marks the template region in first frame, the rectangle coordinates that defines the
             tracking feature location at the first image
     """
-    template = ip.uint8ToFloat(template)
+    template = ip.uint8ToFloat(template)    # convert the template from uint8 to float
     rect = rect_template.copy()
     p_prev = np.zeros((6, 1))   # assume the first frame is exact same with the frame where template cropped from
     transformation_affine = np.eye(3,
                                    3)  # since it's the warp transformation of first image itself, it should change the coordinates
     cache = []  # some constant for each iteration
-    for frame in frames:
+    for i, frame in enumerate(frames):
+        print("Frame # " + str(i))
         frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         frame_gray = cv2.equalizeHist(frame_gray)
+        frame_gray = ip.uint8ToFloat(frame_gray)
         rect, p_prev, transformation_affine, cache = affineLKFeatureRegnization(frame_gray, rect, template, rect_template, p_prev,
                                                                         transformation_affine, cache,
                                                                         algorithm="inverse Compositional",
