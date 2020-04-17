@@ -4,7 +4,7 @@ import numpy as np
 import temp
 
 
-def firstTemplateAndSecondFrameAndImageList(path):
+def firstTemplateAndSecondFrameAndImageList(path, flag_covertToGray=True):
     images = []
     cv_img = []
     for image in os.listdir(path):
@@ -12,9 +12,10 @@ def firstTemplateAndSecondFrameAndImageList(path):
     images.sort()
     for image in images:
         img = cv2.imread("%s/%s" % (path, image))
+        if flag_covertToGray:
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         cv_img.append(img)
     """get rectangle and template"""
-    # rect, tempt = temp.rectAndTemp_problem1()
     return cv_img
 
 def rectangleBoundingBoxToInternalPxielsCoodinatesArray(rect):
@@ -117,7 +118,7 @@ def drawRect(img, rect, flag_showImgFeatureWithMarked=False):
     cv2.rectangle(img_copy, p1, p3, (0, 255, 0))
     if flag_showImgFeatureWithMarked:
         cv2.imshow("Image with marked feature", img_copy)
-        if cv2.waitKey(25) & 0xFF == ord('q'):
+        if cv2.waitKey(0):
             cv2.destroyAllWindows()
     return img_copy
 

@@ -113,7 +113,7 @@ def inverseCompositional(frame_current, template, rect_template, p_prev, W_prev,
         cv2.imshow("Dewarped current frame before update", frame_current_dewarped)
         cv2.imshow("Feature cropped from dewarped current frame before update", template_frame_current_dewarped)
         cv2.imshow("Feature template", template)
-        if cv2.waitKey(0):      # & 0xFF == ord('q'):
+        if cv2.waitKey(25) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
     """The new affine warp transformation"""
     W_update = W_prev.copy()
@@ -122,9 +122,9 @@ def inverseCompositional(frame_current, template, rect_template, p_prev, W_prev,
 
     """Iteration of The Inverse Compositional Algorithm"""
     for i in range(iteration):
-        W_prev_inv = np.linalg.inv(W_prev)
+        W_update_inv = np.linalg.inv(W_update)
         # dewarp the current frame to go back to the view of first frame
-        frame_current_dewarped = cv2.warpAffine(frame_current, W_prev_inv[0:2, :], (frame_current.shape[1], frame_current.shape[0]))
+        frame_current_dewarped = cv2.warpAffine(frame_current, W_update_inv[0:2, :], (frame_current.shape[1], frame_current.shape[0]))
         template_frame_current_dewarped = ip.subImageInBoundingBoxAndEq(frame_current_dewarped, rect_template)
 
         """histogram equalize the dewarped cropped image"""
@@ -156,7 +156,7 @@ def inverseCompositional(frame_current, template, rect_template, p_prev, W_prev,
         cv2.imshow("Dewarped current frame after update", frame_current_dewarped)
         cv2.imshow("Feature cropped from dewarped current frame after update", template_frame_current_dewarped)
         cv2.imshow("Feature template", template)
-        if cv2.waitKey(0):  # & 0xFF == ord('q'):
+        if cv2.waitKey(25) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
     return np.dot(W_update, rect_template), p_update, W_update  # return the rectangle upperLeft and lowerRight corners
 
@@ -225,6 +225,7 @@ def LKRegisteration(frames, template, rect_template, flag_showFeatureRegisterati
             tracking feature location at the first image
     """
     # template = cv2.equalizeHist(template)
+    template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
     template = ip.uint8ToFloat(template)    # convert the template from uint8 to float
     rect = rect_template.copy()
     p_prev = np.zeros((6, 1))   # assume the first frame is exact same with the frame where template cropped from

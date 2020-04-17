@@ -24,17 +24,21 @@ flag_trackingFeature = True
 
 
 def runVidOp(directory, rect):
-    tempt, rect, rectT = createtemplate(directory, rect)
+    # tempt, rect, rectT = createtemplate(directory, rect)
     frames = ip.firstTemplateAndSecondFrameAndImageList(
-        directory)  # get first bounding box around template, template, frames
+        directory, flag_covertToGray=False)  # get first bounding box around template, template, frames
+    frame_contains_template = frames[20]
+    left = rect[0]
+    right = rect[1]
+    top = rect[2]
+    bottom = rect[3]
 
+    rect = np.array([[left, right, right], [top, top, bottom], [1, 1, 1]])
+    template = ip.subImageInBoundingBoxAndEq(frame_contains_template, rect)
     print("Import images done")
-
     ip.drawRect(frames[0], rect, True)
-    # try:
-    # frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    # frame_gray = cv2.equalizeHist(frame_gray)
-    fr.LKRegisteration(frames, tempt, rectT)  # rect update
+
+    fr.LKRegisteration(frames[20:], template, rect)  # rect update
     # tempt = ip.subImageInBoundingBoxAndEq(frame_gray, rect)  # template update
     # """show results"""
     # frame_featureMarked = ip.drawRect(frame, rect, False)
@@ -47,7 +51,7 @@ def runVidOp(directory, rect):
 
 def main(prgRun):
     # start file
-    problem = 3
+    problem = 2
 
     if problem == 1:
         directory = './Bolt2/img'
@@ -65,6 +69,9 @@ def main(prgRun):
         # left = 65, right = 180, top = 45, bottom = 135
         rect = [67, 165, 50, 130]
         runVidOp(directory, rect)
+        # rectT, tempt, frames = rectAndTemp_problem2(directory)
+        # fr.LKRegisteration(frames, tempt, rectT)
+
         print("Problem 2 finished")
         # runVid(directory, rect)
 
