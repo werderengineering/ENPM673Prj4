@@ -12,10 +12,6 @@ def createtemplate(directory, rect):
     right = rect[1]
     top = rect[2]
     bottom = rect[3]
-    template = frame[top:bottom, left: right]
-    # template = frame[left: right,top:bottom]
-
-    rect= np.array([[left, right], [bottom, top], [1, 1]])
 
     rect = np.array([[left, right, right], [top, top, bottom], [1, 1, 1]])
     rectT = np.array([[left, right, right], [top, top, bottom], [1, 1, 1]])

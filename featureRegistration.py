@@ -151,7 +151,7 @@ def inverseCompositional(frame_current, template, rect_template, p_prev, W_prev,
         cv2.imshow("Dewarped current frame after update", frame_current_dewarped)
         cv2.imshow("Feature cropped from dewarped current frame after update", template_frame_current_dewarped)
         cv2.imshow("Feature template", template)
-        if cv2.waitKey(0): # & 0xFF == ord('q'):
+        if cv2.waitKey(0) & 0xFF == ord('q'):
             cv2.destroyAllWindows()
     return np.dot(W_update, rect_template), p_update, W_update  # return the rectangle upperLeft and lowerRight corners
 
