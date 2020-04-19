@@ -289,11 +289,10 @@ def LKRegisteration(frames, template, rect_template, rotate, his, numberOfiterat
                                                                                 algorithm="inverse Compositional",
                                                                                 flag_itera=False)  # rect update
         if flag_showFeatureRegisteration:
-            if not rotate:
+            if not rotate == -1:
                 rect, prect, flagU = ip.fixRect(rect, rect_template, prect)
                 if flagU == 1 and count > 20:
                     count = 0
-
                     print('\nUPDATING TEMPLATE')
                     p_prev = np.zeros((6, 1))
                     # rect_template=pRect

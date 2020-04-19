@@ -69,7 +69,10 @@ def main(prgRun):
         frames, template, rect = runVidOp(directory, start=0, rect=rect)
         fr.LKRegisteration(frames, template, rect, rotate=2, his=False, numberOfiteration=4000, delta_p_threshold=0.15)  # rect update
         print("Problem 3 finished")
-
+    else:
+        Exception("No such problem")
+        AssertionError("No such problem")
+        print("No such problem")
     prgRun = False
     return prgRun
 
