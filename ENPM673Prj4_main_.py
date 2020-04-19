@@ -55,10 +55,15 @@ def main(prgRun):
     if problem == 2:
         directory = './Car4/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
-        # rect = [70, 170, 58, 145]   # left, right, up, bottom bound
-        rect = [75, 140, 70, 110]
+
+        rect = [75, 140, 70, 110]   #start = 20
         frames, template, rect = runVidOp(directory, start=20, rect=rect)
-        fr.LKRegisteration(frames, template, rect, rotate=0, robust=True, numberOfiteration=500, delta_p_threshold=0.11)  # rect update
+        fr.LKRegisteration(frames, template, rect, rotate=0, robust=False, numberOfiteration=1000, delta_p_threshold=0.1)  # rect update
+        #Robust version
+        # rect = [70, 170, 58, 145]   #start = 15
+        # frames, template, rect = runVidOp(directory, start=15, rect=rect)
+        # fr.LKRegisteration(frames, template, rect, rotate=-1, robust=True, numberOfiteration=600, delta_p_threshold=0.11) # rect update
+
         print("Problem 2 finished")
 
     if problem == 3:
