@@ -152,55 +152,9 @@ def fixRect(rect, rectTemp, prect):
 
     Limit=3
 
-    # if np.any(point_lowerRight[0]<point_lowerRight[1]):
-    #     print('rect flipped')
-    #     stow0=rect[0,:]
-    #     stow1=rect[1,:]
-    #     newrect=np.ones([3,3])
-    #     newrect[0,:]=stow1
-    #     newrect[1,:]=stow0
-    #     rect=newrect
-    #     print(rect)
-
-    rectdiff=np.abs(prect-rect)
-
-    # if np.any(rectdiff>50):
-    #
-    #     if np.any(rectdiff>90):
-    #         print('large diff')
-    #         print('Resetting tracker')
-    #         rect=rectTemp
-    #         flag=1
-    #
-    #     else:
-    #         print('averaging')
-    #         # print(prect)
-    #         # print(rect)
-    #         rect=(prect+rect)/2
 
     if Limit>WR and Limit>HR:
         prect=rect
-
-    # if WR>Limit or WR<1/Limit:
-    #     print(rect)
-    #     avg=np.mean(rect[0:2, 0])
-    #     Wmod=width/WR
-    #     print(avg)
-    #     print(width/WR)
-    #     print(avg+Wmod)
-    #
-    #     rect[0,0]=prect[0,0]
-    #     rect[1,0]=prect[1,0]
-    #
-    #     # rect[0:1,2]=prect[0:1,2]
-    #     # rect[0:2, 0]=rect[0:2, 0]/WR
-    #     print('Width is fucked')
-    # if HR>Limit or HR<1/Limit:
-    #     # rect[0:2, 1]=rect[0:2, 1]/HR
-    #     rect[0, 1] = prect[0, 1]
-    #     rect[1, 1] = prect[1, 1]
-    #
-    #     print('Height is fucked')
 
     return rect, prect, flag
 
