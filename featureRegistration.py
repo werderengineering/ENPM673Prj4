@@ -7,10 +7,10 @@ def affline(p, rotate):
     assert type(p) == np.ndarray
     assert p.shape == (6, 1)
     p1, p2, p3, p4, p5, p6 = p.reshape(6)
-    if rotate:
+    if rotate == -1:
         return np.array([[1 + p1, p3, p5], [p2, 1 + p4, p6], [0, 0, 1]])
     else:
-        return np.round(np.array([[1 + p1, p3, p5], [p2, 1 + p4, p6], [0, 0, 1]]), 2)
+        return np.round(np.array([[1 + p1, p3, p5], [p2, 1 + p4, p6], [0, 0, 1]]), rotate)
 
 
 def afflineInv(p):
