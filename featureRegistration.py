@@ -78,7 +78,7 @@ def steepestDescent(grad_template, Jacobian_W):
     return SD
 
 
-def inverseCompositional(frame_current, template, rect_template, rotate, his, p_prev, W_prev, cache, numberOfiteration,
+def inverseCompositional(frame_current, template, rect_template, rotate, robust, p_prev, W_prev, cache, numberOfiteration,
                          delta_p_threshold, flag_showItera=False):
     """
     Parameters
@@ -144,12 +144,12 @@ def inverseCompositional(frame_current, template, rect_template, rotate, his, p_
         """scale the overall intensity to match the template or histogram equalize the dewarped cropped image"""
         # template_frame_current_dewarped = cv2.convertScaleAbs(template_frame_current_dewarped, alpha=alpha, beta=beta)
 
-        if his:
+        if robust:
             template_frame_current_dewarped = RobustCar.hist_match(template_frame_current_dewarped, template)
 
         error = template - template_frame_current_dewarped  # compute the error between new feature and previous frame, shape: (20x20)
         error_column = ip.imgToArray(error)  # reshape error array to be (400, 1), checked
-        if his:
+        if robust:
             error_column = RobustCar.getRobustError(error_column)
         delta_p = np.dot(-Hinv, np.dot(SD.T,
                                        error_column))  # shape: (6x1) = (6x6) (6x400)(400x1) ??????????????????????????????????????
@@ -178,7 +178,7 @@ def inverseCompositional(frame_current, template, rect_template, rotate, his, p_
     return np.dot(W_update, rect_template), p_update, W_update  # return the rectangle upperLeft and lowerRight corners
 
 
-def affineLKFeatureRegnization(frame_current, rect, template, rect_template, rotate, his, p_prev, W_prev, cache, numberOfiteration,
+def affineLKFeatureRegnization(frame_current, rect, template, rect_template, rotate, robust, p_prev, W_prev, cache, numberOfiteration,
                                delta_p_threshold, algorithm="inverse Compositional", flag_itera=False):
     """
         Parameters
@@ -231,14 +231,14 @@ def affineLKFeatureRegnization(frame_current, rect, template, rect_template, rot
                 SD)  # compute the inverse of Hessian matrix based on SD, shape: (6, 6) = (6x400) dot (400x6)
             cache = grad_template_x, grad_template_y, grad_template, Jacobian_W, SD, Hinv
         """iteratively update the bounding box"""
-        rect, p_update, W_update = inverseCompositional(frame_current, template, rect_template, rotate, his, p_prev, W_prev, cache,
+        rect, p_update, W_update = inverseCompositional(frame_current, template, rect_template, rotate, robust, p_prev, W_prev, cache,
                                                         numberOfiteration, delta_p_threshold, flag_showItera=flag_itera)
     else:
         Exception("No such algorithm: " + str(algorithm))
     return rect, p_update, W_update, cache
 
 
-def LKRegisteration(frames, template, rect_template, rotate, his, numberOfiteration, delta_p_threshold, flag_showFeatureRegisteration=True):
+def LKRegisteration(frames, template, rect_template, rotate, robust, numberOfiteration, delta_p_threshold, flag_showFeatureRegisteration=True):
     """
         Parameters
         ----------
@@ -283,7 +283,7 @@ def LKRegisteration(frames, template, rect_template, rotate, his, numberOfiterat
         frame_gray = ip.uint8ToFloat(frame_gray)
 
         rect, p_prev, transformation_affine, cache = affineLKFeatureRegnization(frame_gray, rect, template,
-                                                                                rect_template, rotate, his, p_prev,
+                                                                                rect_template, rotate, robust, p_prev,
                                                                                 transformation_affine, cache,
                                                                                 numberOfiteration, delta_p_threshold,
                                                                                 algorithm="inverse Compositional",

@@ -41,7 +41,7 @@ def runVidOp(directory, start, rect):
 
 def main(prgRun):
     # start file
-    problem = 3
+    problem = 2
 
     if problem == 1:
         directory = './Bolt2/img'
@@ -49,15 +49,16 @@ def main(prgRun):
         # left = 250, right = 320, top = 75, bottom = 150
         rect = [240, 265, 70, 120]    # left, right, up, bottom bound
         frames, template, rect = runVidOp(directory, start=20, rect=rect)
-        fr.LKRegisteration(frames, template, rect, rotate=1, his=False, numberOfiteration=1000, delta_p_threshold=0.1)  # rect update
+        fr.LKRegisteration(frames, template, rect, rotate=1, robust=False, numberOfiteration=1000, delta_p_threshold=0.1)  # rect update
         print("Problem 1 finished")
 
     if problem == 2:
         directory = './Car4/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
-        rect = [70, 170, 58, 145]   # left, right, up, bottom bound
-        frames, template, rect = runVidOp(directory, start=15, rect=rect)
-        fr.LKRegisteration(frames, template, rect, rotate=-1, his=True, numberOfiteration=500, delta_p_threshold=0.11)  # rect update
+        # rect = [70, 170, 58, 145]   # left, right, up, bottom bound
+        rect = [75, 140, 70, 110]
+        frames, template, rect = runVidOp(directory, start=20, rect=rect)
+        fr.LKRegisteration(frames, template, rect, rotate=0, robust=True, numberOfiteration=500, delta_p_threshold=0.11)  # rect update
         print("Problem 2 finished")
 
     if problem == 3:
@@ -67,7 +68,7 @@ def main(prgRun):
         # rect = [160, 250, 75, 150]
         rect = [135, 220, 70, 195]
         frames, template, rect = runVidOp(directory, start=0, rect=rect)
-        fr.LKRegisteration(frames, template, rect, rotate=2, his=False, numberOfiteration=4000, delta_p_threshold=0.15)  # rect update
+        fr.LKRegisteration(frames, template, rect, rotate=2, robust=False, numberOfiteration=4000, delta_p_threshold=0.15)  # rect update
         print("Problem 3 finished")
 
     prgRun = False
