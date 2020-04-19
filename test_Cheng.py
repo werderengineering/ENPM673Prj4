@@ -44,9 +44,5 @@ def checAffineWarp():
     # if cv2.waitKey(25) & 0xFF == ord('q'):
     #     cv2.destroyAllWindows()
 
-# checAffineWarp()
-p = np.array([[1, 2, 3, 4, 5, 6]])
-print(p)
-p = p.reshape((3, 2))
-p = p.T
-print(p)
+def compare():
+    template = cv2.imread('./Car4/img/template.jpg')
