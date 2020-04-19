@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 import imagesProcessing as ip
-import weightedCarFunctions
+import RobustCar
 
 def affline(p, rotate):
     assert type(p) == np.ndarray
@@ -145,12 +145,12 @@ def inverseCompositional(frame_current, template, rect_template, rotate, his, p_
         # template_frame_current_dewarped = cv2.convertScaleAbs(template_frame_current_dewarped, alpha=alpha, beta=beta)
 
         if his:
-            template_frame_current_dewarped = ip.hist_match(template_frame_current_dewarped, template)
+            template_frame_current_dewarped = RobustCar.hist_match(template_frame_current_dewarped, template)
 
         error = template - template_frame_current_dewarped  # compute the error between new feature and previous frame, shape: (20x20)
         error_column = ip.imgToArray(error)  # reshape error array to be (400, 1), checked
         if his:
-            error_column = weightedCarFunctions.getRobustError(error_column)
+            error_column = RobustCar.getRobustError(error_column)
         delta_p = np.dot(-Hinv, np.dot(SD.T,
                                        error_column))  # shape: (6x1) = (6x6) (6x400)(400x1) ??????????????????????????????????????
 

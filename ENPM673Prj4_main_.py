@@ -9,7 +9,6 @@ from scipy import signal
 
 import featureRegistration as fr
 import imagesProcessing as ip
-from temp import *
 
 from imageFileNames import *
 
@@ -42,7 +41,7 @@ def runVidOp(directory, start, rect):
 
 def main(prgRun):
     # start file
-    problem = 3
+    problem = 2
 
     if problem == 1:
         directory = './Bolt2/img'
@@ -58,7 +57,7 @@ def main(prgRun):
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
         rect = [70, 170, 58, 145]   # left, right, up, bottom bound
         frames, template, rect = runVidOp(directory, start=15, rect=rect)
-        fr.LKRegisteration(frames, template, rect, rotate=True, his=True, numberOfiteration=500, delta_p_threshold=0.11)  # rect update
+        fr.LKRegisteration(frames, template, rect, rotate=False, his=True, numberOfiteration=500, delta_p_threshold=0.11)  # rect update
         print("Problem 2 finished")
 
     if problem == 3:
