@@ -7,7 +7,7 @@ def affline(p):
     assert type(p) == np.ndarray
     assert p.shape == (6, 1)
     p1, p2, p3, p4, p5, p6 = p.reshape(6)
-    return np.array([[1+p1, p3, p5], [p2, 1+p4, p6], [0, 0, 1]])
+    return np.round(np.array([[1+p1, p3, p5], [p2, 1+p4, p6], [0, 0, 1]]),0)
 
 
 def afflineInv(p):
@@ -30,8 +30,8 @@ def affline_Jacobian(rect):
     point_upperRight = rect[0:2, 1].astype(int)
     point_lowerRight = rect[0:2, 2].astype(int)
 
-    width = int(point_lowerRight[0] - point_upperLeft[0])    # width of bounding box
-    height = int(point_lowerRight[1] - point_upperLeft[1])   # height of bounding box
+    width = np.abs(int(point_lowerRight[0] - point_upperLeft[0]))    # width of bounding box
+    height = np.abs(int(point_lowerRight[1] - point_upperLeft[1]))   # height of bounding box
     Jacobian_W = np.zeros(((width+1)*(height+1), 2, 6))   # initialize the Jacobian of affine transformation matrix
     index = 0
     for y in range(point_upperLeft[1], point_lowerRight[1]+1):    # loop over range of y: y is second element in a variable vector
@@ -141,10 +141,10 @@ def inverseCompositional(frame_current, template, rect_template, p_prev, W_prev,
 
         W_update = compositionTwoAffine(W_update, W_delta_p)   # update the affine transformation, shape is (3x3)
         if np.linalg.norm(delta_p) < threshold:
-            print("Converged at iteration #" + str(i))
+            # print("Converged at iteration #" + str(i))
             break
-    print("The average error is " + str(np.mean(error)) + " in 0~1 \n" + "                     " + str(np.mean(error)*255) + " in 255")
-    print("Delta p is \n" + str((p_update-p_prev).T.reshape((3, 2)).T))
+    # print("The average error is " + str(np.mean(error)) + " in 0~1 \n" + "                     " + str(np.mean(error)*255) + " in 255")
+    # print("Delta p is \n" + str((p_update-p_prev).T.reshape((3, 2)).T))
     """show Lucas-Kanade tracking result"""
     if flag_showItera:
         # highlight where big error is
@@ -225,14 +225,15 @@ def LKRegisteration(frames, template, rect_template, flag_showFeatureRegisterati
             tracking feature location at the first image
     """
     # template = cv2.equalizeHist(template)
-    template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
-    template = ip.uint8ToFloat(template)    # convert the template from uint8 to float
+
     rect = rect_template.copy()
     p_prev = np.zeros((6, 1))   # assume the first frame is exact same with the frame where template cropped from
-    transformation_affine = np.eye(3,
-                                   3)  # since it's the warp transformation of first image itself, it should change the coordinates
+    transformation_affine = np.eye(3,3)  # since it's the warp transformation of first image itself, it should change the coordinates
     cache = []  # some constant for each iteration
+    prect=rect_template
+    count=0
     for i, frame in enumerate(frames):
+        # try:
         print("Frame # " + str(i))
         frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # frame_gray = cv2.equalizeHist(frame_gray)
@@ -242,7 +243,36 @@ def LKRegisteration(frames, template, rect_template, flag_showFeatureRegisterati
                                                                         algorithm="inverse Compositional",
                                                                         flag_itera=True)  # rect update
         if flag_showFeatureRegisteration:
+            rect,prect,flagU=ip.fixRect(rect,rect_template,prect)
+            #
+            # if flagU:
+            #     print(count)
+            #
+            if flagU==1 and count>20:
+                count=0
+
+                print('\nUPDATING TEMPLATE')
+                p_prev = np.zeros((6, 1))
+                # rect_template=pRect
+                transformation_affine = np.eye(3, 3)
+                cache=[]
+                # print(rect_template)
+                # template = ip.subImageInBoundingBoxAndEq(frame, rect_template)
+                # cv2.imshow('template Frame', template)
+                # if cv2.waitKey(0):
+                #     None
+                # template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+                # template = ip.uint8ToFloat(template)
+
+
             ip.drawRect(frame, rect, flag_showImgFeatureWithMarked=True)
+            pRect=rect.copy()
+            count+=1
+        # except:
+        #     print('Lost tracking')
+        #
+        #     if flag_showFeatureRegisteration:
+        #         ip.drawRect(frame, rect, flag_showImgFeatureWithMarked=True)
 
 def debug():
     # affineLKtracker(img, tmp, rect, p_prev, flag_frameCrop=True)

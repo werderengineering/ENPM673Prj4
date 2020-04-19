@@ -68,9 +68,9 @@ def subImageInBoundingBoxAndEq(img, rect, histEqualize=False):
     assert img_cropped.shape[1] == point_lowerRight[0] - point_upperLeft[0] + 1, "img cut to size: " + str(
         img_cropped.shape[0]) + " in x, and supposed to be " + str(
         int(point_lowerRight[0] - point_upperLeft[0]))  # number of pixles in x smaller than range
-    assert img_cropped.shape[0] == point_lowerRight[1] - point_upperLeft[1] + 1, "img cut to size: " + str(
-        img_cropped.shape[1]) + " in y, and supposed to be " + str(
-        int(point_lowerRight[1] - point_upperLeft[1]))  # number of pixles in y smaller than range
+    # assert img_cropped.shape[0] == point_lowerRight[1] - point_upperLeft[1] + 1, "img cut to size: " + str(
+    #     img_cropped.shape[1]) + " in y, and supposed to be " + str(
+    #     int(point_lowerRight[1] - point_upperLeft[1]))  # number of pixles in y smaller than range
     # if histEqualize:
         # img_cropped = cv2.equalizeHist(img_cropped)
     return img_cropped
@@ -147,3 +147,85 @@ def floatToUint8(img):
     """change the image intensity from uint8 to float"""
     img_copy = img * 255.0
     return img_copy.astype(np.uint8)
+
+def fixRect(rect,rectTemp,prect):
+    flag=0
+    if np.any(rect<0):
+        print('rect invert')
+        rect = np.abs(rect)
+
+    point_upperLeft = rect[0:2, 0].astype(int)
+    point_lowerRight = rect[0:2, 2].astype(int)
+    point_upperRight = rect[0:2, 1].astype(int)
+
+
+
+    width = int(point_lowerRight[0] - point_upperLeft[0])  # width of bounding box
+    height = int(point_lowerRight[1]-point_upperLeft[1])  # height of bounding box
+
+    point_upperLeftT = rectTemp[0:2, 0].astype(int)
+    point_lowerRightT = rectTemp[0:2, 2].astype(int)
+
+    widthT = int(point_lowerRightT[0] - point_upperLeftT[0])  # width of bounding box
+    heightT = int(point_lowerRightT[1]-point_upperLeftT[1])  # height of bounding box
+
+    WR=np.absolute(width/widthT)
+    HR=np.absolute(height/heightT)
+
+    Limit=3
+
+
+
+    # if np.any(point_lowerRight[0]<point_lowerRight[1]):
+    #     print('rect flipped')
+    #     stow0=rect[0,:]
+    #     stow1=rect[1,:]
+    #     newrect=np.ones([3,3])
+    #     newrect[0,:]=stow1
+    #     newrect[1,:]=stow0
+    #     rect=newrect
+    #     print(rect)
+
+    rectdiff=np.abs(prect-rect)
+
+    # if np.any(rectdiff>50):
+    #
+    #     if np.any(rectdiff>90):
+    #         print('large diff')
+    #         print('Resetting tracker')
+    #         rect=rectTemp
+    #         flag=1
+    #
+    #     else:
+    #         print('averaging')
+    #         # print(prect)
+    #         # print(rect)
+    #         rect=(prect+rect)/2
+
+
+
+    if Limit>WR and Limit>HR:
+        prect=rect
+
+    # if WR>Limit or WR<1/Limit:
+    #     print(rect)
+    #     avg=np.mean(rect[0:2, 0])
+    #     Wmod=width/WR
+    #     print(avg)
+    #     print(width/WR)
+    #     print(avg+Wmod)
+    #
+    #     rect[0,0]=prect[0,0]
+    #     rect[1,0]=prect[1,0]
+    #
+    #     # rect[0:1,2]=prect[0:1,2]
+    #     # rect[0:2, 0]=rect[0:2, 0]/WR
+    #     print('Width is fucked')
+    # if HR>Limit or HR<1/Limit:
+    #     # rect[0:2, 1]=rect[0:2, 1]/HR
+    #     rect[0, 1] = prect[0, 1]
+    #     rect[1, 1] = prect[1, 1]
+    #
+    #     print('Height is fucked')
+
+    return rect,prect,flag

@@ -35,6 +35,16 @@ def runVidOp(directory, rect):
 
     rect = np.array([[left, right, right], [top, top, bottom], [1, 1, 1]])
     template = ip.subImageInBoundingBoxAndEq(frame_contains_template, rect)
+    template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+    # template = cv2.GaussianBlur(template, (5, 5), cv2.BORDER_DEFAULT)
+
+    template = ip.uint8ToFloat(template)  # convert the template from uint8 to float
+    cv2.imshow('template Frame', template)
+    if cv2.waitKey(0):
+        None
+
+
+
     print("Import images done")
     ip.drawRect(frames[20], rect, True)
 
@@ -51,14 +61,15 @@ def runVidOp(directory, rect):
 
 def main(prgRun):
     # start file
-    problem = 2
+    problem = 3
 
     if problem == 1:
         directory = './Bolt2/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
         # left = 250, right = 320, top = 75, bottom = 150
 
-        rect = [250, 320, 75, 150]
+        # rect = [245, 260, 70, 115]
+        rect = [240, 265, 70, 120]
         runVidOp(directory, rect)
         print("Problem 1 finished")
         # runVid(directory, rect)
@@ -67,7 +78,7 @@ def main(prgRun):
         directory = './Car4/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
         # left = 65, right = 180, top = 45, bottom = 135
-        rect = [68, 160, 58, 130]
+        rect = [75, 140, 70, 110]
         runVidOp(directory, rect)
         # rectT, tempt, frames = rectAndTemp_problem2(directory)
         # fr.LKRegisteration(frames, tempt, rectT)
@@ -79,7 +90,7 @@ def main(prgRun):
         directory = './DragonBaby/img'
         # directory = str(input('What is the name and directory of the folder with the images? Note, this should be entered as"./folder_name if on Windows": \n'))
         # left = 130, right = 220, top = 75, bottom = 300
-        rect = [150, 220, 75, 150]
+        rect = [160, 250, 75, 150]
         runVidOp(directory, rect)
         print("Problem 3 finished")
         # runVid(directory, rect)
