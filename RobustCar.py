@@ -52,9 +52,9 @@ def getRobustError(errorVector, flag=False):
     mean = np.mean(errorVector)
     r, c = errorVector.shape
     q = np.zeros((r, c))
-    r1, c1 = np.where(np.abs(mean - errorVector) <= var)
+    r1, c1 = np.where(np.abs(mean - errorVector) <= sd)
     q[r1, c1] = 1
-    r2, c2 = np.where(np.abs(mean - errorVector) > var)
+    r2, c2 = np.where(np.abs(mean - errorVector) > sd)
     q[r2, c2] = 1.1
 
     errorVector = q * errorVector
