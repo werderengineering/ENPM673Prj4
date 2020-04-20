@@ -264,6 +264,9 @@ def LKRegisteration(frames, template, rect_template, rotate, robust, numberOfite
 
     template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
     template = ip.uint8ToFloat(template)
+    cv2.imshow('Template',template)
+
+
     rect = rect_template.copy()
     p_prev = np.zeros((6, 1))  # assume the first frame is exact same with the frame where template cropped from
     transformation_affine = np.eye(3,
